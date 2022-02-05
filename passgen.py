@@ -1,6 +1,7 @@
 import datetime
 import os
 import string, random
+import re
 
 from art import *
 from colorama import Fore
@@ -12,6 +13,8 @@ ascii_art = text2art(text='Password Generator') #declare ascii art
 os.system('Password Generator') #title
 os.system('cls') #clear the screen
 print(f"{Fore.MAGENTA}{ascii_art}{Fore.RESET}") #show ascii art
+
+regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
 
 while True:
     try:
@@ -58,22 +61,37 @@ while True:
         continue
     
     try:
-        option = str(input('Would you like to save the passowrds?(Y/N): ').lower())
+        option = str(input('Would you like to save the passwords?(Y/N): ').lower())
         
         if option == 'y':
             try:
-                path = str(input('The path to save the passowrd(s): '))
-                
-                start = timer()
-                
-                with open(f"{path}\passwords.txt", 'w') as file:
-                    for element in passwords:
-                        file.write(f"{element} \n")
-                    file.close()
+                path = str(input('The path to save the password(s) to: '))
+                if amount < 6:
                     
-                print('Passwords saved.')
-                end = timer()
-                print(f"Took {end-start} seconds to save passwords to {path}\passwords.txt")
+                    for i in range(amount):
+                        email = str(input('Email: '))
+                        if(re.fullmatch(regex, email)):
+                            name = str(input('Name/What is the password for: '))
+                            
+                            with open(f"{path}\{name}.txt", 'w') as file:
+                                file.write(f"Email: {email} \n Password: {passwords[i]}")
+                                print(f"Password for {name} saved.")
+                                file.close()
+                        
+                        else:
+                            print('Invalid email.')
+                
+                else:
+                    start = timer()
+                    
+                    with open(f"{path}\passwords.txt", 'w') as file:
+                        for element in passwords:
+                            file.write(f"{element} \n")
+                        file.close()
+                        
+                    end = timer()
+                    print('Passwords saved.')
+                    print(f"Took {end-start} seconds to save passwords to {path}\passwords.txt")
             
             except Exception as e:
                 print(f'Error: {e}')
